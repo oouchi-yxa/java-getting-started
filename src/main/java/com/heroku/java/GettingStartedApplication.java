@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -20,7 +21,6 @@ public class GettingStartedApplication {
     public GettingStartedApplication(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
 
     @GetMapping("/")
     public String index() {
@@ -48,6 +48,9 @@ public class GettingStartedApplication {
             return "error";
         }
     }
+
+    @Autowired
+    RestTemplate restTemplate;
 
     public static void main(String[] args) {
         SpringApplication.run(GettingStartedApplication.class, args);
