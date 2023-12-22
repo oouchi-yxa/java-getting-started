@@ -1,13 +1,10 @@
 package com.heroku.java;
 
-import com.heroku.java.mail.MailRequest;
-import com.heroku.java.mail.MailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -24,18 +21,6 @@ public class GettingStartedApplication {
         this.dataSource = dataSource;
     }
 
-    @Autowired
-    RestTemplate restTemplate;
-
-    @GetMapping("/mail/send")
-    public String test() {
-        MailRequest request = new MailRequest();
-        MailResponse response = restTemplate.postForObject(
-                "https://server.to/api/user/12345",
-                request,
-                MailResponse.class);
-        return "";
-    }
 
     @GetMapping("/")
     public String index() {
