@@ -6,5 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MailResponse {
-    String sample;
+    String code;
+    String error;
+    String validation_errors;
 }
