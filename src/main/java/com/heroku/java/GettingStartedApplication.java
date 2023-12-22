@@ -1,5 +1,7 @@
 package com.heroku.java;
 
+import com.heroku.java.mail.MailRequest;
+import com.heroku.java.mail.MailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -49,8 +51,19 @@ public class GettingStartedApplication {
         }
     }
 
-    @Autowired
-    RestTemplate restTemplate;
+    @GetMapping("/mail/send")
+    public String test() {
+        //
+        RestTemplate restTemplate = new RestTemplate();
+        //
+        MailRequest request = new MailRequest();
+        //
+        MailResponse response = restTemplate.postForObject(
+                "https://server.to/api/user/12345",
+                request,
+                MailResponse.class);
+        return "";
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(GettingStartedApplication.class, args);
