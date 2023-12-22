@@ -2,6 +2,7 @@ package com.heroku.java;
 
 import com.heroku.java.mail.MailRequest;
 import com.heroku.java.mail.MailResponse;
+import com.heroku.java.mail.MailSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -58,8 +59,10 @@ public class GettingStartedApplication {
         //
         MailRequest request = new MailRequest();
         //
+        MailSetting mailSetting = new MailSetting();
+        //
         MailResponse response = restTemplate.postForObject(
-                "https://server.to/api/user/12345",
+                mailSetting.getUrl(),
                 request,
                 MailResponse.class);
         return "";

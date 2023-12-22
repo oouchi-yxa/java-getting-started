@@ -7,8 +7,8 @@ import lombok.Setter;
 @Setter
 public class MailSetting {
 
-    String sample;
+    String url = System.getenv("MAIL_URL");
 
-
+    String key = System.getenv("MAIL_KEY");
 
 }
