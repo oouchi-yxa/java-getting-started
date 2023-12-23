@@ -38,7 +38,7 @@ public class MailSample {
         model.addAttribute("message", "終了");
 
         if (StringUtils.isEmpty(address) || !(address.endsWith("@nec.com") || address.endsWith("@ncontr.com"))) {
-            model.addAttribute("message", "対象外メールアドレス");
+            model.addAttribute("message", "メールアドレス未指定か対象外アドレス");
             return "mail/send";
         }
         if (StringUtils.isEmpty(subject)) {
