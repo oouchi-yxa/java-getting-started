@@ -54,7 +54,7 @@ public class GettingStartedApplication {
         }
     }
 
-    @GetMapping("/mail/send")
+    @GetMapping("/mail/send_x")
     public String mailSend() {
         //
         RestTemplate restTemplate = new RestTemplate();
