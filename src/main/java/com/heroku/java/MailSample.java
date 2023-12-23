@@ -1,11 +1,13 @@
 package com.heroku.java;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Value;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,7 +27,8 @@ public class MailSample {
     @ResponseBody
     public WebhookReply mailWebhook(
             @RequestBody String body,
-            @RequestHeader Map<String, String> map
+            @RequestHeader Map<String, String> map,
+            HttpServletResponse response
     ) {
         for (String key : map.keySet()) {
             log.info(key + " : " + map.get(key));
@@ -33,14 +36,17 @@ public class MailSample {
         log.info("body = " + body);
 
         WebhookReply reply = new WebhookReply();
-        reply.setText("xxx");
+        reply.setStatus(HttpStatus.NO_CONTENT);
 
-        return reply;
+        // 204をセットする
+        response.setStatus(HttpStatus.NO_CONTENT.value());
+
+        return null;
     }
 
     @Data
     public class WebhookReply {
-        private String text;
+        private HttpStatus status;
     }
 
     @GetMapping("/mail/input")
