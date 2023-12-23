@@ -54,26 +54,6 @@ public class GettingStartedApplication {
         }
     }
 
-    @GetMapping("/mail/send_x")
-    public String mailSend() {
-        //
-        RestTemplate restTemplate = new RestTemplate();
-        //
-        MailRequest request = new MailRequest();
-        //
-        MailSetting mailSetting = new MailSetting();
-        //
-        RequestEntity<MailRequest> requestEntity = RequestEntity
-                .post(mailSetting.getUrl())
-                .header("Authorization", "Bearer " + mailSetting.getKey()) // (1)
-                .body(request);
-
-        ResponseEntity<MailResponse> response =
-                restTemplate.exchange(requestEntity, MailResponse.class);
-
-        return "";
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(GettingStartedApplication.class, args);
     }
