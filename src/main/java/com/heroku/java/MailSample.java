@@ -11,6 +11,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -25,7 +26,7 @@ public class MailSample {
         return "mail/input";
     }
 
-    @GetMapping("/mail/send")
+    @PostMapping("/mail/send")
     public String mailSend()
     {
         //
