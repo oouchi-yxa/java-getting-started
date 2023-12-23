@@ -2,7 +2,9 @@
 <html>
 <body>
 <form method="POST" action="/mail/send">
-    <textarea name="body">
+    メールアドレス：<input name="address" value=""><br/>
+    サブジェクト：<input name="subject" value=""><br/>
+    本文：<textarea rows="5" cols="40" name="body">
     </textarea>
     <input type="submit" name="送信" />
 </form>

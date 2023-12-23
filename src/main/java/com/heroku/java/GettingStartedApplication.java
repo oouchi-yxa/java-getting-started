@@ -1,16 +1,10 @@
 package com.heroku.java;
 
-import com.heroku.java.mail.MailRequest;
-import com.heroku.java.mail.MailResponse;
-import com.heroku.java.mail.MailSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

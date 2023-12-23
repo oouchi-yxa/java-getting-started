@@ -1,23 +1,25 @@
 package com.heroku.java;
 
-import com.heroku.java.mail.MailRequest;
-import com.heroku.java.mail.MailResponse;
-import com.heroku.java.mail.MailSetting;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Value;
+import lombok.extern.java.Log;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
 
 @Controller
+@Log
 public class MailSample {
 
     @GetMapping("/mail/input")
@@ -27,19 +29,37 @@ public class MailSample {
     }
 
     @PostMapping("/mail/send")
-    public String mailSend()
+    public String mailSend(
+            @RequestParam(name = "address", required = false) String address,
+            @RequestParam(name = "subject", required = false) String subject,
+            @RequestParam(name = "body", required = false) String body,
+            Model model)
     {
+        model.addAttribute("message", "終了");
+
+        if (StringUtils.isEmpty(address) || !(address.endsWith("@nec.com") || address.endsWith("@ncontr.com"))) {
+            model.addAttribute("message", "対象外メールアドレス");
+            return "mail/send";
+        }
+        if (StringUtils.isEmpty(subject)) {
+            model.addAttribute("message", "サブジェクト指定なし");
+            return "mail/send";
+        }
+        if (StringUtils.isEmpty(body)) {
+            model.addAttribute("message", "本文指定なし");
+            return "mail/send";
+        }
         //
         RestTemplate restTemplate = new RestTemplate();
         //
         Envelope envelope =
-                new Envelope(new Address("oouchi-yxa@nec.com"));
+                new Envelope(new Address(address));
         //
         Request request = Request.builder()
                 .envelopes(Collections.singletonList(envelope))
-                .from(new Address("oouchi-yxa@nec.com"))
-                .subject("subject1")
-                .body(new Body("body1"))
+                .from(new Address(address))
+                .subject(subject)
+                .body(new Body(body))
                 .build();
         //
         MailSetting mailSetting = new MailSetting();
@@ -54,10 +74,10 @@ public class MailSample {
         ResponseEntity<RestResponse> response =
                 restTemplate.exchange(requestEntity, RestResponse.class);
 
+        log.info("mail response: " + response.toString());
+
         return "mail/send";
     }
-
-
 
     @Builder
     @Getter
