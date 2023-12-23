@@ -22,7 +22,8 @@ import java.util.Map;
 public class MailSample {
 
     @PostMapping("/mail/webhook")
-    public String mailWebhook(
+    @ResponseBody
+    public WebhookReply mailWebhook(
             @RequestBody String body,
             @RequestHeader Map<String, String> map
     ) {
@@ -31,9 +32,16 @@ public class MailSample {
         }
         log.info("body = " + body);
 
-        return "webhook";
+        WebhookReply reply = new WebhookReply();
+        reply.setText("xxx");
+
+        return reply;
     }
 
+    @Data
+    public class WebhookReply {
+        private String text;
+    }
 
     @GetMapping("/mail/input")
     public String mailInput()
