@@ -60,7 +60,7 @@ public class MailSample {
 
     @Builder
     @Getter
-    private class Request {
+    private static class Request {
         private List<Envelope> envelopes;
         private Address from;
         private String subject;
@@ -68,22 +68,22 @@ public class MailSample {
     }
 
     @Value
-    private class Envelope {
+    private static class Envelope {
         Address to;
     }
 
     @Value
-    private class Address {
+    private static class Address {
         String address;
     }
 
     @Value
-    private class Body {
+    private static class Body {
         String text;
     }
 
     @Data
-    private class RestResponse {
+    private static class RestResponse {
         private String code;
         private String error;
         private String validationErrors;
