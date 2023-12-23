@@ -15,7 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -82,11 +84,14 @@ public class MailSample {
         Envelope envelope =
                 new Envelope(new Address(address));
         //
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
+        //
         Request request = Request.builder()
                 .envelopes(Collections.singletonList(envelope))
                 .from(new Address(address))
                 .subject(subject)
                 .body(new Body(body))
+                .custom_args(new CustomArgs(sdf.format(new Date())))
                 .build();
         //
         MailSetting mailSetting = new MailSetting();
@@ -113,6 +118,12 @@ public class MailSample {
         private Address from;
         private String subject;
         private Body body;
+        private CustomArgs custom_args;
+    }
+
+    @Value
+    private static class CustomArgs {
+        String mail_id;
     }
 
     @Value
