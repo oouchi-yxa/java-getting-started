@@ -21,10 +21,9 @@ import java.util.Map;
 @Log
 public class MailSample {
 
-    @GetMapping("/mail/webhook")
     @PostMapping("/mail/webhook")
     public void mailWebhook(
-            @RequestBody(required = false) String body,
+            @RequestBody String body,
             @RequestHeader Map<String, String> map
     ) {
         for (String key : map.keySet()) {
