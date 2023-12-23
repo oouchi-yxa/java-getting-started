@@ -22,7 +22,7 @@ import java.util.Map;
 public class MailSample {
 
     @PostMapping("/mail/webhook")
-    public void mailWebhook(
+    public String mailWebhook(
             @RequestBody String body,
             @RequestHeader Map<String, String> map
     ) {
@@ -30,6 +30,8 @@ public class MailSample {
             log.info(key + " : " + map.get(key));
         }
         log.info("body = " + body);
+
+        return "webhook";
     }
 
 
