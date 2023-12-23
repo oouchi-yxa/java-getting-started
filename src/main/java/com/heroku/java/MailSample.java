@@ -10,17 +10,29 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Log
 public class MailSample {
+
+    @GetMapping("/mail/webhook")
+    @PostMapping("/mail/webhook")
+    public void mailWebhook(
+            @RequestBody String body,
+            @RequestHeader Map<String, String> map
+    ) {
+        for (String key : map.keySet()) {
+            log.info(key + " : " + map.get(key));
+        }
+        log.info("body = " + body);
+    }
+
 
     @GetMapping("/mail/input")
     public String mailInput()
@@ -74,7 +86,7 @@ public class MailSample {
         ResponseEntity<RestResponse> response =
                 restTemplate.exchange(requestEntity, RestResponse.class);
 
-        log.info("mail response: " + response.toString());
+        log.info("mail response: " + response);
 
         return "mail/send";
     }
