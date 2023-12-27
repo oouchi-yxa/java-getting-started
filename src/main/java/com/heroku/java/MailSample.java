@@ -59,6 +59,10 @@ public class MailSample {
             @RequestParam(name = "address", required = false) String address,
             @RequestParam(name = "subject", required = false) String subject,
             @RequestParam(name = "body", required = false) String body,
+            @RequestParam(name = "name1", required = false) String name1,
+            @RequestParam(name = "replace1", required = false) String replace1,
+            @RequestParam(name = "name2", required = false) String name2,
+            @RequestParam(name = "replace2", required = false) String replace2,
             Model model)
     {
         model.addAttribute("message", "終了");
@@ -80,7 +84,12 @@ public class MailSample {
         //
         Envelope envelope =
                 new Envelope(new Address(address), new LinkedHashMap<>());
-        envelope.getReplace_value().put("abc", "あいう");
+        if (StringUtils.isNotEmpty(name1)) {
+            envelope.getReplace_value().put(name1, StringUtils.defaultString(replace1));
+        }
+        if (StringUtils.isNotEmpty(name2)) {
+            envelope.getReplace_value().put(name2, StringUtils.defaultString(replace2));
+        }
         //
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
         //
