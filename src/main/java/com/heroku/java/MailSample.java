@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @Log
@@ -82,7 +79,8 @@ public class MailSample {
         RestTemplate restTemplate = new RestTemplate();
         //
         Envelope envelope =
-                new Envelope(new Address(address));
+                new Envelope(new Address(address), new LinkedHashMap<>());
+        envelope.getReplace_value().put("abc", "あいう");
         //
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
         //
@@ -129,6 +127,7 @@ public class MailSample {
     @Value
     private static class Envelope {
         Address to;
+        LinkedHashMap<String, String> replace_value;
     }
 
     @Value
