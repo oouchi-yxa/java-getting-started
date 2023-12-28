@@ -46,7 +46,7 @@ public class MailSample {
 
     @PostMapping(value="/mail/webhook2", consumes= MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public WebhookReply mailWebhook2(
+    public String mailWebhook2(
             @RequestBody WebhookReceive body,
             @RequestHeader Map<String, String> map,
             HttpServletResponse response
@@ -56,21 +56,19 @@ public class MailSample {
         }
         log.info("body(json) = " + body);
 
-        WebhookReply reply = new WebhookReply();
+        // 204をセットする
+        response.setStatus(HttpStatus.NO_CONTENT.value());
 
-        // 200をセットする
-        response.setStatus(HttpStatus.OK.value());
-        reply.setStatus(HttpStatus.OK);
-        return reply;
+        return null;
     }
 
     @Data
-    public class WebhookReply {
+    private class WebhookReply {
         private HttpStatus status;
     }
 
     @Data
-    public class WebhookReceive {
+    private static class WebhookReceive {
         String  mta_mail_id;
         String  email;
         String  from;
