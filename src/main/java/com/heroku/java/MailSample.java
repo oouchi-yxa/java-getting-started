@@ -23,7 +23,7 @@ import java.util.*;
 @Log
 public class MailSample {
 
-    @PostMapping("/mail/webhook")
+    @PostMapping("/mail/webhook_bk")
     @ResponseBody
     public WebhookReply mailWebhook(
             @RequestBody String body,
@@ -44,7 +44,7 @@ public class MailSample {
         return null;
     }
 
-    @PostMapping(value="/mail/webhook2", consumes= MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/mail/webhook", consumes= MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String mailWebhook2(
             @RequestBody WebhookReceive data,
