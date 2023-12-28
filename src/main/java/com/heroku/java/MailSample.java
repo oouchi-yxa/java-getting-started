@@ -47,7 +47,6 @@ public class MailSample {
     @PostMapping(value="/mail/webhook2", consumes= MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String mailWebhook2(
-            @RequestBody String json,
             @RequestBody WebhookReceive data,
             @RequestHeader Map<String, String> map,
             HttpServletResponse response
@@ -55,7 +54,6 @@ public class MailSample {
         for (String key : map.keySet()) {
             log.info(key + " : " + map.get(key));
         }
-        log.info("data(json) = " + json);
         log.info("data(class) = " + data);
 
         // 204をセットする
