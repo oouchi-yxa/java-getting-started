@@ -8,6 +8,7 @@ import lombok.Value;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,9 +44,41 @@ public class MailSample {
         return null;
     }
 
+    @PostMapping(value="/mail/webhook2", consumes= MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public WebhookReply mailWebhook2(
+            @RequestBody WebhookReceive body,
+            @RequestHeader Map<String, String> map,
+            HttpServletResponse response
+    ) {
+        for (String key : map.keySet()) {
+            log.info(key + " : " + map.get(key));
+        }
+        log.info("body(json) = " + body);
+
+        WebhookReply reply = new WebhookReply();
+
+        // 200をセットする
+        response.setStatus(HttpStatus.OK.value());
+        reply.setStatus(HttpStatus.OK);
+        return reply;
+    }
+
     @Data
     public class WebhookReply {
         private HttpStatus status;
+    }
+
+    @Data
+    public class WebhookReceive {
+        String  mta_mail_id;
+        String  email;
+        String  from;
+        long  timestamp;
+        LinkedHashMap<String, String>  custom_args;
+        String  event;
+        String  header_from;
+        String  batch_id;
     }
 
     @GetMapping("/mail/input")
