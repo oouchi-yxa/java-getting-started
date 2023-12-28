@@ -74,7 +74,7 @@ public class MailSample {
         String  mta_mail_id;
         String  email;
         String  from;
-        long  timestamp;
+        Long  timestamp;
         LinkedHashMap<String, String>  custom_args;
         String  event;
         String  header_from;
