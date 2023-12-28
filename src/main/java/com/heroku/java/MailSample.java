@@ -23,30 +23,16 @@ import java.util.*;
 @Log
 public class MailSample {
 
-    @PostMapping("/mail/webhook_bk")
-    @ResponseBody
-    public WebhookReply mailWebhook(
-            @RequestBody String body,
-            @RequestHeader Map<String, String> map,
-            HttpServletResponse response
-    ) {
-        for (String key : map.keySet()) {
-            log.info(key + " : " + map.get(key));
-        }
-        log.info("body = " + body);
-
-        WebhookReply reply = new WebhookReply();
-        reply.setStatus(HttpStatus.NO_CONTENT);
-
-        // 204をセットする
-        response.setStatus(HttpStatus.NO_CONTENT.value());
-
-        return null;
-    }
-
+    /**
+     * Webhookテスト
+     * @param data 受け取ったJSONから WebhookReceive に変換した値
+     * @param map ヘッダー情報
+     * @param response 応答オブジェクト
+     * @return 使用しない
+     */
     @PostMapping(value="/mail/webhook", consumes= MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String mailWebhook2(
+    public String mailWebhook(
             @RequestBody WebhookReceive data,
             @RequestHeader Map<String, String> map,
             HttpServletResponse response
@@ -62,11 +48,9 @@ public class MailSample {
         return null;
     }
 
-    @Data
-    private class WebhookReply {
-        private HttpStatus status;
-    }
-
+    /**
+     * Webhook連携された内容
+     */
     @Data
     private static class WebhookReceive {
         String  mta_mail_id;
@@ -79,12 +63,28 @@ public class MailSample {
         String  batch_id;
     }
 
+    /**
+     * 入力画面表示（ mail/input.html ）
+     * @return
+     */
     @GetMapping("/mail/input")
     public String mailInput()
     {
         return "mail/input";
     }
 
+    /**
+     * メール送信（autobuhn）
+     * @param address メールアドレス
+     * @param subject サブジェクト
+     * @param body メール本文
+     * @param name1 差し込みキー１
+     * @param replace1 差し込み文字列１
+     * @param name2 差し込みキー２
+     * @param replace2 差し込み文字列２
+     * @param model 画面表示値設定用
+     * @return mail/send.html
+     */
     @PostMapping("/mail/send")
     public String mailSend(
             @RequestParam(name = "address", required = false) String address,
@@ -110,9 +110,9 @@ public class MailSample {
             model.addAttribute("message", "本文指定なし");
             return "mail/send";
         }
-        //
+        // REST送信用便利クラス
         RestTemplate restTemplate = new RestTemplate();
-        //
+        // 差し込み情報
         Envelope envelope =
                 new Envelope(new Address(address), new LinkedHashMap<>());
         if (StringUtils.isNotEmpty(name1)) {
@@ -121,9 +121,9 @@ public class MailSample {
         if (StringUtils.isNotEmpty(name2)) {
             envelope.getReplace_value().put(name2, StringUtils.defaultString(replace2));
         }
-        //
+        // メール案件番号ダミー（今は、適当に日時で）
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
-        //
+        // 送信するリクエストの組み立て
         Request request = Request.builder()
                 .envelopes(Collections.singletonList(envelope))
                 .from(new Address(address))
@@ -131,16 +131,16 @@ public class MailSample {
                 .body(new Body(body))
                 .custom_args(new CustomArgs(sdf.format(new Date())))
                 .build();
-        //
+        // 環境変数読み込み用クラス
         MailSetting mailSetting = new MailSetting();
-        //
+        // 送信するリクエストの入れ物を作成
         RequestEntity<Request> requestEntity = RequestEntity
                 .post(mailSetting.getUrl())
                 .header("Authorization",
                         "Bearer " + mailSetting.getKey())
                 .body(request);
 
-        //
+        // 送信処理（API呼び出し）
         ResponseEntity<RestResponse> response =
                 restTemplate.exchange(requestEntity, RestResponse.class);
 
