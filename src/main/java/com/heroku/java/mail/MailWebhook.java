@@ -31,7 +31,7 @@ public class MailWebhook {
      * @param response 応答オブジェクト
      * @return 使用しない
      */
-    @PostMapping(value="/mail/webhook_test", consumes= MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/mail/webhook", consumes= MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String mailWebhook(
             @RequestBody String data,
