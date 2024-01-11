@@ -1,73 +1,36 @@
-package com.heroku.java;
+package com.heroku.java.mail;
 
-import jakarta.servlet.http.HttpServletResponse;
+import com.heroku.java.MailSetting;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Value;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 @Controller
 @Log
-public class MailSample {
-
-    /**
-     * Webhookテスト
-     * @param data 受け取ったJSONから WebhookReceive に変換した値
-     * @param map ヘッダー情報
-     * @param response 応答オブジェクト
-     * @return 使用しない
-     */
-//    @PostMapping(value="/mail/webhook_test", consumes= MediaType.APPLICATION_JSON_VALUE)
-//    @ResponseBody
-//    public String mailWebhook(
-//            @RequestBody WebhookReceive data,
-//            @RequestHeader Map<String, String> map,
-//            HttpServletResponse response
-//    ) {
-//        for (String key : map.keySet()) {
-//            log.info(key + " : " + map.get(key));
-//        }
-//        log.info("data(class) = " + data);
-//
-//        // 204をセットする
-//        response.setStatus(HttpStatus.NO_CONTENT.value());
-//
-//        return null;
-//    }
-
-    /**
-     * Webhook連携された内容
-     */
-//    @Data
-//    private static class WebhookReceive {
-//        String  mta_mail_id;
-//        String  email;
-//        String  from;
-//        Long  timestamp;
-//        LinkedHashMap<String, String>  custom_args;
-//        String  event;
-//        String  header_from;
-//        String  batch_id;
-//    }
+public class MailSendSample {
 
     /**
      * 入力画面表示（ mail/input.html ）
-     * @return
+     * @return 入力画面
      */
-    @GetMapping("/mail/inputxx")
+    @GetMapping("/mail/input")
     public String mailInput()
     {
         return "mail/input";
@@ -85,7 +48,7 @@ public class MailSample {
      * @param model 画面表示値設定用
      * @return mail/send.html
      */
-    @PostMapping("/mail/sendxx")
+    @PostMapping("/mail/send")
     public String mailSend(
             @RequestParam(name = "address", required = false) String address,
             @RequestParam(name = "subject", required = false) String subject,
