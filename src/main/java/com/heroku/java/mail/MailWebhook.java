@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -58,13 +59,22 @@ public class MailWebhook {
                     = objectMapper.readValue(data, WebhookReceive.class);
             log.info("data(class) = " + dataClass);
 
-            log.info("key :" + sha256hash(mailSetting.getWebhookKey()));
-            log.info("sign:" + hMacSha1(data, mailSetting.getWebhookKey()));
+            String headerSignature = map.get("x-autobahn-webhook-signature");
+            String bodySignature = sha256hash(mailSetting.getWebhookKey())
+                    + "." + hMacSha1(data, mailSetting.getWebhookKey());
+            log.info("bodySignature : " + bodySignature);
+            if (headerSignature != null && headerSignature.equals(bodySignature)) {
+                log.info("signature check OK !!!!");
+            } else {
+                log.info("signature check NG !!!!");
+            }
 
         } catch (JsonProcessingException e) {
             log.info("mapping miss: " + e.getMessage());
-        } catch (Exception e) {
-            log.info("sha1 miss: " + e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            log.info("no such algorithm miss: " + e.getMessage());
+        } catch (InvalidKeyException e) {
+            log.info("invalid key miss: " + e.getMessage());
         }
 
         // 204をセットする
@@ -88,7 +98,8 @@ public class MailWebhook {
         String  batch_id;
     }
 
-    public static String hMacSha1(String str, String key) throws Exception {
+    private static String hMacSha1(String str, String key)
+            throws NoSuchAlgorithmException, InvalidKeyException {
         final String algorithm = "HmacSHA1";
         SecretKeySpec sk = new SecretKeySpec(key.getBytes(), algorithm);
         Mac mac = Mac.getInstance(algorithm);
