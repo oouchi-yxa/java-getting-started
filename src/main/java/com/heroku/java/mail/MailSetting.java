@@ -11,5 +11,6 @@ public class MailSetting {
 
     String key = System.getenv("MAIL_KEY");
 
+    String webhookKey = System.getenv("MAIL_WEBHOOK_KEY");
 
 }
