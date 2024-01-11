@@ -87,7 +87,7 @@ public class MailWebhook {
         Mac mac = Mac.getInstance("HmacSHA1");
         mac.init(sk);
         byte[] result = mac.doFinal(str.getBytes());
-        return result.toString();
+        return new String(result);
     }
 
 }
