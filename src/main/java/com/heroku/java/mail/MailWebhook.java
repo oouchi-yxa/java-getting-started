@@ -1,23 +1,13 @@
 package com.heroku.java.mail;
 
-import com.heroku.java.MailSetting;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Value;
 import lombok.extern.java.Log;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller

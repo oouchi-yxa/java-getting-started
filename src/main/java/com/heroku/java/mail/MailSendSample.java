@@ -1,6 +1,5 @@
 package com.heroku.java.mail;
 
-import com.heroku.java.MailSetting;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;

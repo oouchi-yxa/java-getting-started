@@ -1,4 +1,4 @@
-package com.heroku.java;
+package com.heroku.java.mail;
 
 import lombok.Getter;
 import lombok.Setter;
