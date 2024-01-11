@@ -16,7 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -54,7 +58,8 @@ public class MailWebhook {
                     = objectMapper.readValue(data, WebhookReceive.class);
             log.info("data(class) = " + dataClass);
 
-            log.info(hMacSha1(data, mailSetting.getWebhookKey()));
+            log.info("key :" + sha256hash(mailSetting.getWebhookKey()));
+            log.info("sign:" + hMacSha1(data, mailSetting.getWebhookKey()));
 
         } catch (JsonProcessingException e) {
             log.info("mapping miss: " + e.getMessage());
@@ -92,4 +97,10 @@ public class MailWebhook {
         return Base64.getEncoder().encodeToString(result);
     }
 
+    private static String sha256hash(String str) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] digest = md.digest(str.getBytes(StandardCharsets.UTF_8));
+        HexFormat hex = HexFormat.of().withLowerCase();
+        return hex.formatHex(digest);
+    }
 }
