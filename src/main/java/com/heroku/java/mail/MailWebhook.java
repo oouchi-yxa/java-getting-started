@@ -101,10 +101,10 @@ public class MailWebhook {
     private static String hMacSha1(String str, String key)
             throws NoSuchAlgorithmException, InvalidKeyException {
         final String algorithm = "HmacSHA1";
-        SecretKeySpec sk = new SecretKeySpec(key.getBytes(), algorithm);
+        SecretKeySpec sk = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), algorithm);
         Mac mac = Mac.getInstance(algorithm);
         mac.init(sk);
-        byte[] result = mac.doFinal(str.getBytes());
+        byte[] result = mac.doFinal(str.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(result);
     }
 
