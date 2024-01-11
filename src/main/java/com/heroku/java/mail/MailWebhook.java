@@ -1,18 +1,28 @@
 package com.heroku.java.mail;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Controller
 @Log
 public class MailWebhook {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * Webhookテスト
@@ -32,6 +42,14 @@ public class MailWebhook {
             log.info(key + " : " + map.get(key));
         }
         log.info("data(String) = " + data);
+
+        try {
+            WebhookReceive dataClass
+                    = objectMapper.readValue(data, WebhookReceive.class);
+            log.info("data(class) = " + dataClass);
+        } catch (JsonProcessingException e) {
+            log.info("mapping miss: " + data);
+        }
 
         // 204をセットする
         response.setStatus(HttpStatus.NO_CONTENT.value());
