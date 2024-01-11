@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -83,11 +84,12 @@ public class MailWebhook {
     }
 
     public static String hMacSha1(String str, String key) throws Exception {
-        SecretKeySpec sk = new SecretKeySpec(key.getBytes(), "HmacSHA1");
-        Mac mac = Mac.getInstance("HmacSHA1");
+        final String algorithm = "HmacSHA1";
+        SecretKeySpec sk = new SecretKeySpec(key.getBytes(), algorithm);
+        Mac mac = Mac.getInstance(algorithm);
         mac.init(sk);
         byte[] result = mac.doFinal(str.getBytes());
-        return new String(result);
+        return Base64.getEncoder().encodeToString(result);
     }
 
 }
