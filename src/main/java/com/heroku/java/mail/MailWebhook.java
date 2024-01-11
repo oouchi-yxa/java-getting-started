@@ -26,9 +26,6 @@ public class MailWebhook {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private MailSetting mailSetting;
-
     /**
      * Webhookテスト
      * @param data 受け取ったJSONから WebhookReceive に変換した値
@@ -43,6 +40,9 @@ public class MailWebhook {
             @RequestHeader Map<String, String> map,
             HttpServletResponse response
     ) {
+        // 環境変数読み込み用クラス
+        MailSetting mailSetting = new MailSetting();
+
         for (String key : map.keySet()) {
             log.info(key + " : " + map.get(key));
         }
