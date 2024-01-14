@@ -1,10 +1,14 @@
 package com.heroku.java.cms;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.websocket.server.PathParam;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -14,6 +18,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,12 +32,16 @@ public class CmsFileStatus {
         return "cms/input";
     }
 
-    @GetMapping(value = "/cmsFileStatus/{filePath}")
+    @GetMapping(value = "/cmsFileStatus/*")
     public String cmsFileStatus(
-            @PathVariable String filePath,
             Model model) {
-
         CmsSetting cmsSetting = new CmsSetting();
+
+        // リクエストが欲しいのだが…
+        HttpServletRequest request = ((ServletRequestAttributes) Objects
+                .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+
+        String filePath = request.getPathInfo();
 
         // CloudCube設定の参照
         String cloudcubeAccessKeyId = cmsSetting.getAccess_key_id();
