@@ -71,13 +71,9 @@ public class CmsFile {
                 basePrefix = m.group(2);
             }
 
-            // リスト参照
-            ListObjectsRequest listObjects = ListObjectsRequest
-                    .builder()
-                    .bucket(bucket)
-                    .prefix(basePrefix + filePath)
-                    .build();
+            getContentType(s3Client, bucket, filePath);
 
+            // 参照
             GetObjectRequest objectRequest = GetObjectRequest
                     .builder()
                     .key(basePrefix + filePath)
@@ -92,6 +88,7 @@ public class CmsFile {
             System.out.print("\n data get 2");
 
             model.addAttribute("message", new String(data, Charset.defaultCharset()));
+
 
             // Write the data to a local file.
             File myFile = new File("/tmp/test.txt");
@@ -172,33 +169,6 @@ public class CmsFile {
             }
             model.addAttribute("message", tmp);
 
-            /*
-            System.out.print("\n data get 0");
-
-            GetObjectRequest objectRequest = GetObjectRequest
-                    .builder()
-                    .key("hxlzsmew3hjg/public/tree_sample.html")
-                    .bucket("cloud-cube-us2")
-                    .build();
-
-            System.out.print("\n data get 1");
-
-            ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(objectRequest);
-            byte[] data = objectBytes.asByteArray();
-
-            System.out.print("\n data get 2");
-
-            // Write the data to a local file.
-            File myFile = new File("/tmp/test.txt");
-            OutputStream os = new FileOutputStream(myFile);
-            os.write(data);
-            System.out.println("Successfully obtained bytes from an S3 object");
-            os.close();
-
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-             */
         } catch (S3Exception e) {
             System.err.println(e.awsErrorDetails().errorMessage());
             throw e;
@@ -207,4 +177,24 @@ public class CmsFile {
 
         return "cms/fileStatus";
     }
+
+    public void getContentType (S3Client s3, String bucketName, String keyName) {
+
+        try {
+            HeadObjectRequest objectRequest = HeadObjectRequest.builder()
+                    .key(keyName)
+                    .bucket(bucketName)
+                    .build();
+
+            HeadObjectResponse objectHead = s3.headObject(objectRequest);
+            String type = objectHead.contentType();
+            System.out.println("The object content type is "+type);
+
+        } catch (S3Exception e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            System.exit(1);
+        }
+    }
+
+
 }
