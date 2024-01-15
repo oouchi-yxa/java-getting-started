@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,6 +90,8 @@ public class CmsFile {
             byte[] data = objectBytes.asByteArray();
 
             System.out.print("\n data get 2");
+
+            model.addAttribute("message", new String(data, Charset.defaultCharset()));
 
             // Write the data to a local file.
             File myFile = new File("/tmp/test.txt");
