@@ -40,6 +40,7 @@ public class CmsFileStatus {
         String filePath = request.getPathInfo();
 
         log.info("filePath: " + filePath);
+        log.info(" :" + request.getRequestURI());
 
         // CloudCube設定の参照
         String cloudcubeAccessKeyId = cmsSetting.getAccess_key_id();
