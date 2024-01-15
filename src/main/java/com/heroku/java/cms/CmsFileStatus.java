@@ -27,27 +27,28 @@ public class CmsFileStatus {
         return "cms/input";
     }
 
-    @GetMapping(value = "/cmsFileStatus/**")
+    @GetMapping(value = "/fileStatus/**")
     public String cmsFileStatus(
             HttpServletRequest request,
             Model model) {
+
         CmsSetting cmsSetting = new CmsSetting();
 
-        String filePath = request.getRequestURI().replaceFirst("/cmsFileStatus","");
+        String filePath = request.getRequestURI().replaceFirst("/fileStatus","");
 
         log.info("filePath: " + filePath);
 
         // CloudCube設定の参照
-        String cloudcubeAccessKeyId = cmsSetting.getAccess_key_id();
-        String cloudcubeSecretAccessKey = cmsSetting.getSecret_access_key();
-        String cloudcubeUrl = cmsSetting.getUrl();
+        String cloudCubeAccessKeyId = cmsSetting.getAccess_key_id();
+        String cloudCubeSecretAccessKey = cmsSetting.getSecret_access_key();
+        String cloudCubeUrl = cmsSetting.getUrl();
 
-        System.setProperty("aws.accessKeyId", cloudcubeAccessKeyId);
-        System.setProperty("aws.secretAccessKey", cloudcubeSecretAccessKey);
+        System.setProperty("aws.accessKeyId", cloudCubeAccessKeyId);
+        System.setProperty("aws.secretAccessKey", cloudCubeSecretAccessKey);
 
         model.addAttribute("message", "");
 
-        // 試しに組み込み
+        // クライアント
         S3Client s3Client =
                 S3Client.builder()
                         .credentialsProvider(DefaultCredentialsProvider.create())
@@ -57,7 +58,7 @@ public class CmsFileStatus {
         try {
             // 設定値取り出し
             Pattern p = Pattern.compile("^https://(.*)\\.s3\\.amazonaws\\.com/(.*)$");
-            Matcher m = p.matcher(cloudcubeUrl);
+            Matcher m = p.matcher(cloudCubeUrl);
             String bucket = "";
             String basePrefix = "";
             if (m.find()){
@@ -81,8 +82,8 @@ public class CmsFileStatus {
             for (S3Object myValue : objects) {
                 log.info("\n The name of the key is " + myValue.key());
                 log.info("\n The owner is " + myValue.owner());
-
-                tmp +=  myValue.key() + ":" + myValue.owner() + "<br>\n";
+                log.info("\n The last modified is " + myValue.lastModified());
+                tmp +=  myValue.key() + ":" + myValue.owner() + ":" + myValue.lastModified() + "\n";
             }
             model.addAttribute("message", tmp);
 
