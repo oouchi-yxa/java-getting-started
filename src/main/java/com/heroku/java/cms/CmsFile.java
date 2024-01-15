@@ -1,30 +1,112 @@
 package com.heroku.java.cms;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
-import software.amazon.awssdk.services.s3.model.S3Exception;
-import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.*;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
 @Log
-public class CmsFileStatus {
+public class CmsFile {
 
     @GetMapping("/cms/input")
     public String mailInput()
     {
         return "cms/input";
+    }
+
+    @GetMapping(value = "/file/**")
+    public String cmsFile(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) {
+
+        CmsSetting cmsSetting = new CmsSetting();
+
+        String filePath = request.getRequestURI().replaceFirst("/file","");
+
+        log.info("filePath: " + filePath);
+
+        // CloudCube設定の参照
+        String cloudCubeAccessKeyId = cmsSetting.getAccess_key_id();
+        String cloudCubeSecretAccessKey = cmsSetting.getSecret_access_key();
+        String cloudCubeUrl = cmsSetting.getUrl();
+
+        System.setProperty("aws.accessKeyId", cloudCubeAccessKeyId);
+        System.setProperty("aws.secretAccessKey", cloudCubeSecretAccessKey);
+
+        model.addAttribute("message", "");
+
+        // クライアント
+        S3Client s3Client =
+                S3Client.builder()
+                        .credentialsProvider(DefaultCredentialsProvider.create())
+                        .region(Region.US_EAST_1)
+                        .build();
+
+        try {
+            // 設定値取り出し
+            Pattern p = Pattern.compile("^https://(.*)\\.s3\\.amazonaws\\.com/(.*)$");
+            Matcher m = p.matcher(cloudCubeUrl);
+            String bucket = "";
+            String basePrefix = "";
+            if (m.find()){
+                bucket = m.group(1);
+                basePrefix = m.group(2);
+            }
+
+            // リスト参照
+            ListObjectsRequest listObjects = ListObjectsRequest
+                    .builder()
+                    .bucket(bucket)
+                    .prefix(basePrefix + filePath)
+                    .build();
+
+            GetObjectRequest objectRequest = GetObjectRequest
+                    .builder()
+                    .key(basePrefix + filePath)
+                    .bucket(bucket)
+                    .build();
+
+            System.out.print("\n data get 1");
+
+            ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(objectRequest);
+            byte[] data = objectBytes.asByteArray();
+
+            System.out.print("\n data get 2");
+
+            // Write the data to a local file.
+            File myFile = new File("/tmp/test.txt");
+            OutputStream os = new FileOutputStream(myFile);
+            os.write(data);
+            System.out.println("Successfully obtained bytes from an S3 object");
+            os.close();
+
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (S3Exception e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            throw e;
+//            System.exit(1);
+        }
+
+        return "cms/fileStatus";
     }
 
     @GetMapping(value = "/fileStatus/**")
@@ -122,5 +204,4 @@ public class CmsFileStatus {
 
         return "cms/fileStatus";
     }
-
 }
