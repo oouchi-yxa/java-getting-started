@@ -71,7 +71,7 @@ public class CmsFile {
                 basePrefix = m.group(2);
             }
 
-            getContentType(s3Client, bucket, filePath);
+            getContentType(s3Client, bucket, basePrefix + filePath);
 
             // 参照
             GetObjectRequest objectRequest = GetObjectRequest
