@@ -33,14 +33,9 @@ public class CmsFileStatus {
             Model model) {
         CmsSetting cmsSetting = new CmsSetting();
 
-        // リクエストが欲しいのだが…
-//        HttpServletRequest request = ((ServletRequestAttributes) Objects
-//                .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-
-        String filePath = request.getPathInfo();
+        String filePath = request.getRequestURI().replaceFirst("/cmsFileStatus","");
 
         log.info("filePath: " + filePath);
-        log.info(" :" + request.getRequestURI());
 
         // CloudCube設定の参照
         String cloudcubeAccessKeyId = cmsSetting.getAccess_key_id();
