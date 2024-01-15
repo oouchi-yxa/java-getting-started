@@ -32,14 +32,15 @@ public class CmsFileStatus {
         return "cms/input";
     }
 
-    @GetMapping(value = "/cmsFileStatus/*")
+    @GetMapping(value = "/cmsFileStatus/**")
     public String cmsFileStatus(
+            HttpServletRequest request,
             Model model) {
         CmsSetting cmsSetting = new CmsSetting();
 
         // リクエストが欲しいのだが…
-        HttpServletRequest request = ((ServletRequestAttributes) Objects
-                .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+//        HttpServletRequest request = ((ServletRequestAttributes) Objects
+//                .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
         String filePath = request.getPathInfo();
 
