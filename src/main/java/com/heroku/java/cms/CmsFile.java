@@ -192,7 +192,7 @@ public class CmsFile {
 
         } catch (S3Exception e) {
             System.err.println(e.awsErrorDetails().errorMessage());
-            System.exit(1);
+            throw e;
         }
     }
 
