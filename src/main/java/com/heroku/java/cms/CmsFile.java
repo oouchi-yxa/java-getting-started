@@ -71,7 +71,10 @@ public class CmsFile {
                 basePrefix = m.group(2);
             }
 
-            getContentType(s3Client, bucket, basePrefix + filePath);
+            //
+            HeadObjectResponse head
+                    = getContentType(s3Client, bucket, basePrefix + filePath);
+            log.info("head: " + head);
 
             // 参照
             GetObjectRequest objectRequest = GetObjectRequest
@@ -80,15 +83,15 @@ public class CmsFile {
                     .bucket(bucket)
                     .build();
 
-            System.out.print("\n data get 1");
-
             ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(objectRequest);
             byte[] data = objectBytes.asByteArray();
 
-            System.out.print("\n data get 2");
+            response.setContentType(head.contentType());
+            response.setContentLengthLong(head.contentLength());
 
-            model.addAttribute("message", new String(data, Charset.defaultCharset()));
-
+            OutputStream responseOutputStream = response.getOutputStream();
+            responseOutputStream.write(data);
+            responseOutputStream.close();
 
             // Write the data to a local file.
             File myFile = new File("/tmp/test.txt");
@@ -96,7 +99,6 @@ public class CmsFile {
             os.write(data);
             System.out.println("Successfully obtained bytes from an S3 object");
             os.close();
-
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -106,7 +108,30 @@ public class CmsFile {
 //            System.exit(1);
         }
 
-        return "cms/fileStatus";
+        return null;
+    }
+
+
+    public HeadObjectResponse getContentType (S3Client s3, String bucketName, String keyName) {
+
+        try {
+            HeadObjectRequest objectRequest = HeadObjectRequest.builder()
+                    .key(keyName)
+                    .bucket(bucketName)
+                    .build();
+
+            HeadObjectResponse objectHead = s3.headObject(objectRequest);
+            String type = objectHead.contentType();
+            System.out.println("The object content type is "+ type);
+            System.out.println("The object last modified is "+ objectHead.lastModified());
+            System.out.println("The object content length is "+ objectHead.contentLength());
+
+            return objectHead;
+
+        } catch (S3Exception e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            throw e;
+        }
     }
 
     @GetMapping(value = "/fileStatus/**")
@@ -176,24 +201,6 @@ public class CmsFile {
         }
 
         return "cms/fileStatus";
-    }
-
-    public void getContentType (S3Client s3, String bucketName, String keyName) {
-
-        try {
-            HeadObjectRequest objectRequest = HeadObjectRequest.builder()
-                    .key(keyName)
-                    .bucket(bucketName)
-                    .build();
-
-            HeadObjectResponse objectHead = s3.headObject(objectRequest);
-            String type = objectHead.contentType();
-            System.out.println("The object content type is "+type);
-
-        } catch (S3Exception e) {
-            System.err.println(e.awsErrorDetails().errorMessage());
-            throw e;
-        }
     }
 
 
