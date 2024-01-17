@@ -13,4 +13,7 @@ public class CmsSetting {
 
     String url = System.getenv("CLOUDCUBE_URL");
 
+    String bucket = "";
+
+    String basePrefix = "";
 }
