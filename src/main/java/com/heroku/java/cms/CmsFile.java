@@ -25,6 +25,9 @@ import java.util.regex.Pattern;
 @Log
 public class CmsFile {
 
+    private static String FILE_SV = "/file";
+    private static String FILE_STATUS_SV = "/fileStatus";
+
     @GetMapping("/cms/input")
     public String mailInput()
     {
@@ -39,7 +42,7 @@ public class CmsFile {
 
         CmsSetting cmsSetting = new CmsSetting();
 
-        String filePath = request.getRequestURI().replaceFirst("/file","");
+        String filePath = request.getRequestURI().replaceFirst(FILE_SV,"");
 
         log.info("filePath: " + filePath);
 
@@ -79,7 +82,7 @@ public class CmsFile {
             // 参照
             GetObjectRequest objectRequest = GetObjectRequest
                     .builder()
-                    .key(basePrefix + filePath)
+                    .key(basePrefix + FILE_SV + filePath)
                     .bucket(bucket)
                     .build();
 
@@ -141,7 +144,7 @@ public class CmsFile {
 
         CmsSetting cmsSetting = new CmsSetting();
 
-        String filePath = request.getRequestURI().replaceFirst("/fileStatus","");
+        String filePath = request.getRequestURI().replaceFirst(FILE_STATUS_SV,"");
 
         log.info("filePath: " + filePath);
 
@@ -177,7 +180,7 @@ public class CmsFile {
             ListObjectsRequest listObjects = ListObjectsRequest
                     .builder()
                     .bucket(bucket)
-                    .prefix(basePrefix + filePath)
+                    .prefix(basePrefix + FILE_SV + filePath)
                     .build();
 
             ListObjectsResponse res = s3Client.listObjects(listObjects);
