@@ -76,7 +76,7 @@ public class CmsFile {
 
             //
             HeadObjectResponse head
-                    = getContentType(s3Client, bucket, basePrefix + filePath);
+                    = getContentType(s3Client, bucket, basePrefix + FILE_SV + filePath);
             log.info("head: " + head);
 
             // 参照
