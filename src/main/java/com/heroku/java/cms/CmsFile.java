@@ -69,15 +69,22 @@ public class CmsFile {
                     .key(key)
                     .bucket(cmsSetting.getBucket())
                     .build();
-
             ResponseInputStream<GetObjectResponse> objectStream = s3Client.getObject(objectRequest);
 
+            // ブラウザに応答する
             response.setContentType(head.contentType());
             response.setContentLengthLong(head.contentLength());
             OutputStream responseOutputStream = response.getOutputStream();
             IOUtils.copy(objectStream, responseOutputStream);
-            objectStream.close();
             responseOutputStream.close();
+
+            // キャッシュに保存する
+            File myFile = new File("/tmp/test.txt");
+            OutputStream os = new FileOutputStream(myFile);
+            IOUtils.copy(objectStream, os);
+            os.close();
+            objectStream.close();
+            System.out.println("Successfully obtained bytes from an S3 object");
 
 //            ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(objectRequest);
 //            byte[] data = objectBytes.asByteArray();
