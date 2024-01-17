@@ -3,6 +3,7 @@ package com.heroku.java.cms;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,21 +42,11 @@ public class CmsFile {
             HttpServletResponse response,
             Model model) {
 
-        CmsSetting cmsSetting = new CmsSetting();
+        CmsSetting cmsSetting = getCmsSetting();
 
         String filePath = request.getRequestURI().replaceFirst(FILE_SV,"");
 
         log.info("filePath: " + filePath);
-
-        // CloudCube設定の参照
-        String cloudCubeAccessKeyId = cmsSetting.getAccess_key_id();
-        String cloudCubeSecretAccessKey = cmsSetting.getSecret_access_key();
-        String cloudCubeUrl = cmsSetting.getUrl();
-
-        System.setProperty("aws.accessKeyId", cloudCubeAccessKeyId);
-        System.setProperty("aws.secretAccessKey", cloudCubeSecretAccessKey);
-
-        model.addAttribute("message", "");
 
         // クライアント
         S3Client s3Client =
@@ -65,46 +56,45 @@ public class CmsFile {
                         .build();
 
         try {
-            // 設定値取り出し
-            Pattern p = Pattern.compile("^https://(.*)\\.s3\\.amazonaws\\.com/(.*)$");
-            Matcher m = p.matcher(cloudCubeUrl);
-            String bucket = "";
-            String basePrefix = "";
-            if (m.find()){
-                bucket = m.group(1);
-                basePrefix = m.group(2);
-            }
-
             // key ex. aaa/bbb/ccc.gif
-            String key = basePrefix + FILE_SV + filePath;
+            String key = cmsSetting.getBasePrefix() + FILE_SV + filePath;
 
             // ヘッダ情報
             HeadObjectResponse head
-                    = getContentType(s3Client, bucket, key);
+                    = getContentType(s3Client, cmsSetting.getBucket(), key);
 
             // ファイル参照
             GetObjectRequest objectRequest = GetObjectRequest
                     .builder()
                     .key(key)
-                    .bucket(bucket)
+                    .bucket(cmsSetting.getBucket())
                     .build();
 
-            ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(objectRequest);
-            byte[] data = objectBytes.asByteArray();
+            ResponseInputStream<GetObjectResponse> objectStream = s3Client.getObject(objectRequest);
 
             response.setContentType(head.contentType());
             response.setContentLengthLong(head.contentLength());
-
             OutputStream responseOutputStream = response.getOutputStream();
-            responseOutputStream.write(data);
+            IOUtils.copy(objectStream, responseOutputStream);
+            objectStream.close();
             responseOutputStream.close();
 
-            // Write the data to a local file.
-            File myFile = new File("/tmp/test.txt");
-            OutputStream os = new FileOutputStream(myFile);
-            os.write(data);
-            System.out.println("Successfully obtained bytes from an S3 object");
-            os.close();
+//            ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(objectRequest);
+//            byte[] data = objectBytes.asByteArray();
+//
+//            response.setContentType(head.contentType());
+//            response.setContentLengthLong(head.contentLength());
+//
+//            OutputStream responseOutputStream = response.getOutputStream();
+//            responseOutputStream.write(data);
+//            responseOutputStream.close();
+//
+//            // Write the data to a local file.
+//            File myFile = new File("/tmp/test.txt");
+//            OutputStream os = new FileOutputStream(myFile);
+//            os.write(data);
+//            System.out.println("Successfully obtained bytes from an S3 object");
+//            os.close();
 
         } catch (IOException ex) {
             ex.printStackTrace();
