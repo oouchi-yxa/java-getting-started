@@ -81,6 +81,8 @@ public class CmsFile {
             // キャッシュに保存する
             File myFile = new File("/tmp/test.txt");
             OutputStream os = new FileOutputStream(myFile);
+            // S3オブジェクトの巻き戻し
+            objectStream.reset();
             IOUtils.copy(objectStream, os);
             os.close();
             objectStream.close();
