@@ -70,6 +70,10 @@ public class CmsFile {
             String cacheFilePath = "/tmp/" + filePath;
             File cacheFile = new File(cacheFilePath);
             Path cachePath = Paths.get(cacheFile.getPath());
+
+            log.info("cache exist:0 " + cacheFile.isFile());
+            log.info("cache size:0 " + Files.size(Paths.get(cacheFile.getPath())));
+
             if (cacheFile.isFile()) {
                 FileTime fileTime = Files.getLastModifiedTime(cachePath);
                 Instant instant = fileTime.toInstant();
