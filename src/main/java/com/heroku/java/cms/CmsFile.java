@@ -63,6 +63,15 @@ public class CmsFile {
             HeadObjectResponse head
                     = getContentType(s3Client, cmsSetting.getBucket(), key);
 
+            // 保存準備
+            String cacheFilePath = "/tmp/" + filePath;
+            File cacheFile = new File(cacheFilePath);
+            if (!cacheFile.getParentFile().isDirectory()) {
+                Files.createDirectories(Paths.get(cacheFile.getAbsolutePath()));
+            }
+            File tmpFile = new File(cacheFilePath + ".tmp");
+            OutputStream fileOutputStream = new FileOutputStream(tmpFile);
+
             // ファイル参照
             GetObjectRequest objectRequest = GetObjectRequest
                     .builder()
@@ -75,20 +84,38 @@ public class CmsFile {
             response.setContentType(head.contentType());
             response.setContentLengthLong(head.contentLength());
             OutputStream responseOutputStream = response.getOutputStream();
-            IOUtils.copy(objectStream, responseOutputStream);
+
+            byte[] buffer = new byte[4098];
+            int len = -1;
+            while ((len = objectStream.read(buffer, 0, 4098)) != -1) {
+                responseOutputStream.write(buffer);
+                fileOutputStream.write(buffer);
+            }
+            responseOutputStream.flush();
             responseOutputStream.close();
 
-            // キャッシュに保存する
-            File myFile = new File("/tmp/test.txt");
-            OutputStream os = new FileOutputStream(myFile);
-            // S3オブジェクトの巻き戻し
-            objectStream.reset();
-            IOUtils.copy(objectStream, os);
-            os.close();
-            objectStream.close();
+            // ファイルクローズ
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            tmpFile.renameTo(cacheFile);
 
-            System.out.println("cache exist: " + myFile.isFile());
-            System.out.println("cache size: " + Files.size(Paths.get(myFile.getPath())));
+            log.info("cache exist: " + cacheFile.isFile());
+            log.info("cache size: " + Files.size(Paths.get(cacheFile.getPath())));
+
+            //            IOUtils.copy(objectStream, responseOutputStream);
+//            responseOutputStream.close();
+
+            // キャッシュに保存する
+//            File myFile = new File("/tmp/test.txt");
+//            OutputStream os = new FileOutputStream(myFile);
+//            // S3オブジェクトの巻き戻し　うまくいかない　自分でループまわすか
+//            objectStream.reset();
+//            IOUtils.copy(objectStream, os);
+//            os.close();
+//            objectStream.close();
+
+//            System.out.println("cache exist: " + myFile.isFile());
+//            System.out.println("cache size: " + Files.size(Paths.get(myFile.getPath())));
 
 //            ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(objectRequest);
 //            byte[] data = objectBytes.asByteArray();
