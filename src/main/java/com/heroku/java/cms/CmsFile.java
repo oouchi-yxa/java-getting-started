@@ -69,7 +69,7 @@ public class CmsFile {
             // キャッシュ準備
             String cacheFilePath = "/tmp/" + filePath;
             File cacheFile = new File(cacheFilePath);
-            Path cachePath = Paths.get(cacheFile.getAbsolutePath());
+            Path cachePath = Paths.get(cacheFile.getPath());
             if (cacheFile.isFile()) {
                 FileTime fileTime = Files.getLastModifiedTime(cachePath);
                 Instant instant = fileTime.toInstant();
