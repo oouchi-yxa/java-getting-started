@@ -88,8 +88,8 @@ public class CmsFile {
             byte[] buffer = new byte[4098];
             int len = -1;
             while ((len = objectStream.read(buffer, 0, 4098)) != -1) {
-                responseOutputStream.write(buffer);
-                fileOutputStream.write(buffer);
+                responseOutputStream.write(buffer, 0, len);
+                fileOutputStream.write(buffer, 0, len);
             }
             responseOutputStream.flush();
             responseOutputStream.close();
