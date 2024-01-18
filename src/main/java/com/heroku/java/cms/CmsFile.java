@@ -18,7 +18,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,9 +66,16 @@ public class CmsFile {
             HeadObjectResponse head
                     = getContentType(s3Client, cmsSetting.getBucket(), key);
 
-            // 保存準備
+            // キャッシュ準備
             String cacheFilePath = "/tmp/" + filePath;
             File cacheFile = new File(cacheFilePath);
+            Path cachePath = Paths.get(cacheFile.getAbsolutePath());
+            if (cacheFile.isFile()) {
+                FileTime fileTime = Files.getLastModifiedTime(cachePath);
+                Instant instant = fileTime.toInstant();
+                log.info("file instant:" + instant);
+            }
+
             if (!cacheFile.getParentFile().isDirectory()) {
                 Files.createDirectories(Paths.get(cacheFile.getAbsolutePath()));
             }
