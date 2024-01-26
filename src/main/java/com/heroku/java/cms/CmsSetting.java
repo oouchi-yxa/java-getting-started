@@ -7,11 +7,13 @@ import lombok.Setter;
 @Setter
 public class CmsSetting {
 
-    String access_key_id = System.getenv("CLOUDCUBE_ACCESS_KEY_ID");
+    String cloudcubeAccessKeyId = System.getenv("CLOUDCUBE_ACCESS_KEY_ID");
 
-    String secret_access_key = System.getenv("CLOUDCUBE_SECRET_ACCESS_KEY");
+    String cloudcubeSecretAccessKey = System.getenv("CLOUDCUBE_SECRET_ACCESS_KEY");
 
-    String url = System.getenv("CLOUDCUBE_URL");
+    String cloudcubeUrl = System.getenv("CLOUDCUBE_URL");
+
+    String cloudcubeFilebase = System.getenv("CLOUDCUBE_FILEBASE");
 
     String bucket = "";
 
