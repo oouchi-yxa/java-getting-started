@@ -86,6 +86,7 @@ public class CmsFile {
                                 Paths.get(cacheFile.getPath())).toInstant();
                 log.info("file time : " + instant);
                 if (instant.isAfter(head.lastModified())) {
+                    log.info("output cache file.");
                     // キャッシュがS3より新しいときは出力して終わる
                     InputStream is = new FileInputStream(cacheFile);
                     // ブラウザに応答する
@@ -107,6 +108,8 @@ public class CmsFile {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
                 return null;
             }
+
+            log.info("output s3 content.");
 
             // キャッシュのディレクトリが無かったら作る
             // このあたりから、排他制御しないとやばい気がする
