@@ -59,9 +59,19 @@ public class CmsUpload {
                     for (MultipartFile file : files) {
                         uploadFiles.add(file.getOriginalFilename());
 
+                        // CloudCubeのベース＋指定したディレクトリ
                         String upKey = cmsSetting.getBasePrefix()
-                                + StringUtils.defaultString(form.getDir())
-                                + "/" + file.getOriginalFilename();
+                                + StringUtils.defaultString(form.getDir());
+                        // 追加指定したパス
+                        if (StringUtils.isNotEmpty(form.getAddDir())) {
+                            upKey += "/" + form.getAddDir();
+                        }
+                        // アップロードファイル名
+                        upKey += "/" + file.getOriginalFilename();
+                        // 重複除去
+                        if (upKey.contains("//")) {
+                            upKey = upKey.replaceAll("//*", "/");
+                        }
 
                         // S3アップロード
                         log.info("key: " + upKey);
