@@ -6,6 +6,12 @@
     <p th:text="${file}"></p>
 </th:block>
 
+アップロード指定：
+<hr />
+<form method="post" enctype="multipart/form-data" action="/cms/upload" >
+    <input type="file" name="files" multiple/>
+    <input type="submit" value="送信する"/>
+</form>
 
 </body>
 </html>

@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Data
-public class UploadForm {
-    private List<MultipartFile> file;
+public class CmsUploadForm {
+    private List<MultipartFile> files;
+    private String path;
 }
