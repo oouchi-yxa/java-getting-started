@@ -12,13 +12,13 @@ S3：
 <hr />
 <table>
     <tr><th>ファイル名</th><th>サイズ</th><th>時間</th></tr>
-    <tr>
         <th:block th:each="map1 : ${s3list}">
-            <td th:text="${map1.name}"></td>
-            <td th:text="${map1.size}"></td>
-            <td th:text="${map1.time}"></td>
+            <tr>
+                <td th:text="${map1.name}"></td>
+                <td th:text="${map1.size}"></td>
+                <td th:text="${map1.time}"></td>
+            </tr>
         </th:block>
-    </tr>
 </table>
 
 アップロード指定：
