@@ -40,11 +40,11 @@ public class CmsUpload {
         }
 
         // ファイル名
+        List<String> files = new ArrayList<>();
         for (MultipartFile file : form.getFile()) {
-            List<String> files = new ArrayList<>();
             files.add(file.getOriginalFilename());
-            model.addAttribute("files", files);
         }
+        model.addAttribute("files", files);
 
         return "cms/upload";
     }
