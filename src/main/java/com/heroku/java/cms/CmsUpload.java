@@ -18,7 +18,7 @@ public class CmsUpload {
     public String cmsUpload(Model model, CmsUploadForm form) {
 
         List<MultipartFile> files = form.getFiles();
-        if (files != null || !files.isEmpty()) {
+        if (files != null && !files.isEmpty()) {
             // ファイル名
             List<String> uploadFiles = new ArrayList<>();
             for (MultipartFile file : files) {
