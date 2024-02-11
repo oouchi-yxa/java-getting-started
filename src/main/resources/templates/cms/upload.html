@@ -25,7 +25,7 @@ S3：
 <hr />
 <form method="post" enctype="multipart/form-data" action="/cms/upload" >
     <th:block th:each="dir : ${dirs}">
-        <input type="radio" name="dir" value="${dir}" th.text="${dir}" />
+        <input type="radio" name="dir" th.value="${dir}" /><span th:text="${dir}"></span>
     </th:block>
     <br />
     追加パス：<input type="text" name="addDir" />
