@@ -8,6 +8,14 @@
     <p th:text="${file}"></p>
 </th:block>
 
+S3：
+<hr />
+<th:block th:each="map1 : ${s3list}">
+    <p th:text="${map1.name}"></p>
+    <p th:text="${map1.size}"></p>
+    <p th:text="${map1.time}"></p>
+</th:block>
+
 アップロード指定：
 <hr />
 <form method="post" enctype="multipart/form-data" action="/cms/upload" >
