@@ -1,6 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
+
+<th:block th:each="error : ${errors}">
+    <p th:text="${error}"></p>
+</th:block>
 
 ・情報表示<br />
 <a href="/fileStatus/">ディレクトリ指定</a>
@@ -13,6 +17,12 @@
 <br />
 <a href="/file/2MOver.html" target="_blank">/file/2MOver.html 内部にimgタグ</a>
 <br />
+<hr>
+・アップロード<br />
+<form method="post" enctype="multipart/form-data" action="/cms/upload" >
+    <input type="file" multiple/>
+    <input type="submit" value="送信する"/>
+</form>
 
 </body>
 </html>
