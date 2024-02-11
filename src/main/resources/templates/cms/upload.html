@@ -8,7 +8,7 @@
 S3：
 <hr />
 <table style="border: solid">
-    <tr><th>ファイル名</th><th>サイズ</th><th>時間</th></tr>
+    <tr><th>ファイル名</th><th>サイズ</th><th>時間</th><th> </th></tr>
         <th:block th:each="map1 : ${s3list}">
             <tr>
                 <td>
@@ -16,6 +16,9 @@ S3：
                 </td>
                 <td th:text="${map1.size}"></td>
                 <td th:text="${map1.time}"></td>
+                <td>
+                    <a th:href="/cms/delete?deletePath=${map1.name}">削除する</a>
+                </td>
             </tr>
         </th:block>
 </table>
