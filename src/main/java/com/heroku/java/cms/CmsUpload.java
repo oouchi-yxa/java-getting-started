@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 @Log
 public class CmsUpload {
 
-    @PostMapping("/cms/upload")
+    @RequestMapping("/cms/upload")
     public String cmsUpload(Model model, CmsUploadForm form) {
 
         List<MultipartFile> files = form.getFiles();
