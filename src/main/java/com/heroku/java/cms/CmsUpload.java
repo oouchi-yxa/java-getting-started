@@ -6,13 +6,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
-import software.amazon.awssdk.services.s3.model.S3Exception;
-import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,17 +27,6 @@ public class CmsUpload {
 
     @RequestMapping("/cms/upload")
     public String cmsUpload(Model model, CmsUploadForm form) {
-
-        // アップロードファイル受付
-        List<MultipartFile> files = form.getFiles();
-        if (files != null && !files.isEmpty()) {
-            // ファイル名
-            List<String> uploadFiles = new ArrayList<>();
-            for (MultipartFile file : files) {
-                uploadFiles.add(file.getOriginalFilename());
-            }
-            model.addAttribute("files", uploadFiles);
-        }
 
         //　既存ファイルの確認
         CmsSetting cmsSetting = getCmsSetting();
@@ -61,6 +49,28 @@ public class CmsUpload {
                         .bucket(cmsSetting.getBucket())
                         .prefix(key)
                         .build();
+
+                // アップロードファイル受付
+                List<MultipartFile> files = form.getFiles();
+                if (files != null && !files.isEmpty()) {
+                    // ファイル名
+                    List<String> uploadFiles = new ArrayList<>();
+                    for (MultipartFile file : files) {
+                        uploadFiles.add(file.getOriginalFilename());
+
+                        log.info("key: " + cmsSetting.getBasePrefix()
+                                + file.getOriginalFilename());
+                        PutObjectRequest put = PutObjectRequest.builder()
+                                .key(cmsSetting.getBasePrefix()
+                                        + file.getOriginalFilename())
+                                .bucket(cmsSetting.getBucket())
+                                .build();
+                        s3Client.putObject(put,
+                                RequestBody.fromInputStream(
+                                        file.getInputStream(), file.getSize()));
+                    }
+                    model.addAttribute("files", uploadFiles);
+                }
 
                 // アップロード先リスト
                 List<String> dirs = new ArrayList<>();
@@ -99,6 +109,8 @@ public class CmsUpload {
             } catch (S3Exception e) {
                 System.err.println(e.awsErrorDetails().errorMessage());
                 throw e;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
