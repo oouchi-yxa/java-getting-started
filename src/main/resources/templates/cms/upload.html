@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
+<span th:text="${message}"></span>
+
 <th:block th:each="file : ${files}">
     <p th:text="${file}"></p>
 </th:block>
