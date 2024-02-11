@@ -42,7 +42,7 @@ public class CmsUpload {
         // ファイル名
         for (MultipartFile file : form.getFile()) {
             List<String> files = new ArrayList<>();
-            files.add(file.getName());
+            files.add(file.getOriginalFilename());
             model.addAttribute("files", files);
         }
 
