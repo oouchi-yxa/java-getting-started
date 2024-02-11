@@ -10,11 +10,16 @@
 
 S3：
 <hr />
-<th:block th:each="map1 : ${s3list}">
-    <p th:text="${map1.name}"></p>
-    <p th:text="${map1.size}"></p>
-    <p th:text="${map1.time}"></p>
-</th:block>
+<table>
+    <tr><th>ファイル名</th><th>サイズ</th><th>時間</th></tr>
+    <tr>
+        <th:block th:each="map1 : ${s3list}">
+            <td th:text="${map1.name}"></td>
+            <td th:text="${map1.size}"></td>
+            <td th:text="${map1.time}"></td>
+        </th:block>
+    </tr>
+</table>
 
 アップロード指定：
 <hr />
