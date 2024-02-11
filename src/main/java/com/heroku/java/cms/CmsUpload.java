@@ -26,8 +26,44 @@ public class CmsUpload {
 
     private static String FILE_SV = "/file";
 
+    @RequestMapping("/cms/delete")
+    public String cmsDelete(Model model, CmsFormDelete form) {
+
+        CmsSetting cmsSetting = getCmsSetting();
+        model.addAttribute("message", "");
+
+        if (StringUtils.isNotEmpty(form.getDeletePath())) {
+            // クライアント
+            try (S3Client s3Client = S3Client.builder()
+                    .credentialsProvider(DefaultCredentialsProvider.create())
+                    .region(Region.US_EAST_1)
+                    .build()) {
+
+                String delKey = cmsSetting.getBasePrefix()
+                        + form.getDeletePath();
+                log.info("del: " + delKey);
+
+                DeleteObjectRequest delReq = DeleteObjectRequest
+                        .builder()
+                        .key(delKey)
+                        .bucket(cmsSetting.getBucket())
+                        .build();
+
+                s3Client.deleteObject(delReq);
+
+                model.addAttribute("message",
+                        "deleted: " + form.getDeletePath());
+            }
+        } else {
+            model.addAttribute("message",
+                    "no delete file");
+        }
+
+        return "cms/delete";
+    }
+
     @RequestMapping("/cms/upload")
-    public String cmsUpload(Model model, CmsUploadForm form) {
+    public String cmsUpload(Model model, CmsFormUpload form) {
 
         //　既存ファイルの確認
         CmsSetting cmsSetting = getCmsSetting();
