@@ -70,7 +70,8 @@ public class CmsUpload {
                     List<Map<String, Object>> s3list = new ArrayList<>();
                     for (S3Object myValue : objects) {
                         Map<String, Object> inMap = new HashMap<>();
-                        inMap.put("name", myValue.key());
+                        inMap.put("name", myValue.key().replaceFirst(
+                                cmsSetting.getBasePrefix(), ""));
                         inMap.put("size", myValue.size());
                         inMap.put("time", myValue.lastModified());
                         s3list.add(inMap);
