@@ -73,11 +73,18 @@ public class CmsUpload {
                             upKey = upKey.replaceAll("//*", "/");
                         }
 
+                        // content-type を取得する
+                        String contentType = "application/octet-stream";
+                        if (file.getContentType() != null) {
+                            contentType = file.getContentType();
+                        }
+
                         // S3アップロード
                         log.info("key: " + upKey);
                         PutObjectRequest put = PutObjectRequest.builder()
                                 .key(upKey)
                                 .bucket(cmsSetting.getBucket())
+                                .contentType(contentType)
                                 .build();
                         s3Client.putObject(put,
                                 RequestBody.fromInputStream(
