@@ -4,17 +4,16 @@
 
 <span th:text="${message}"></span>
 
-<th:block th:each="file : ${files}">
-    <p th:text="${file}"></p>
-</th:block>
-
+<br />
 S3：
 <hr />
-<table>
+<table style="border: solid">
     <tr><th>ファイル名</th><th>サイズ</th><th>時間</th></tr>
         <th:block th:each="map1 : ${s3list}">
             <tr>
-                <td th:text="${map1.name}"></td>
+                <td>
+                    <a th:href="${map1.name}" th:text="${map1.name}"></a>
+                </td>
                 <td th:text="${map1.size}"></td>
                 <td th:text="${map1.time}"></td>
             </tr>
@@ -34,6 +33,13 @@ S3：
     <br />
     <input type="submit" value="送信する"/>
 </form>
+
+<br />
+アップロードしたファイル：
+<hr />
+<th:block th:each="file : ${files}">
+    <p th:text="${file}"></p>
+</th:block>
 
 </body>
 </html>
