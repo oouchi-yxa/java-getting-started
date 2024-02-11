@@ -52,15 +52,19 @@ public class CmsUpload {
 
             try {
 
-                // ルートのパス
+                // ルートのパス( /file以下）
                 String key = cmsSetting.getBasePrefix() + FILE_SV;
 
-                // リスト参照
+                // S3リスト参照
                 ListObjectsRequest listObjects = ListObjectsRequest
                         .builder()
                         .bucket(cmsSetting.getBucket())
                         .prefix(key)
                         .build();
+
+                // アップロード先リスト
+                List<String> dirs = new ArrayList<>();
+                dirs.add(FILE_SV);
 
                 ListObjectsResponse res = s3Client.listObjects(listObjects);
                 List<S3Object> objects = res.contents();
@@ -69,14 +73,27 @@ public class CmsUpload {
                 } else {
                     List<Map<String, Object>> s3list = new ArrayList<>();
                     for (S3Object myValue : objects) {
+
+                        // ファイルパス
+                        String name = myValue.key().replaceFirst(
+                                cmsSetting.getBasePrefix(), "");
+
+                        // ファイルパスからディレクトリ名取得してリスト格納
+                        String dir = name.substring(0, name.lastIndexOf("/"));
+                        if (!dirs.contains(dir)) {
+                            dirs.add(dir);
+                        }
+
+                        // ファイル情報表示用マップ
                         Map<String, Object> inMap = new HashMap<>();
-                        inMap.put("name", myValue.key().replaceFirst(
-                                cmsSetting.getBasePrefix(), ""));
+                        inMap.put("name", name);
                         inMap.put("size", myValue.size());
                         inMap.put("time", myValue.lastModified());
                         s3list.add(inMap);
                     }
+                    // 画面にS3の情報を渡す
                     model.addAttribute("s3list", s3list);
+                    model.addAttribute("dirs", dirs);
                 }
 
             } catch (S3Exception e) {

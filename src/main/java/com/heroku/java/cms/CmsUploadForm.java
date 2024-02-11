@@ -8,5 +8,6 @@ import java.util.List;
 @Data
 public class CmsUploadForm {
     private List<MultipartFile> files;
-    private String path;
+    private String dir;
+    private String addDir;
 }

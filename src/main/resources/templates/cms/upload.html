@@ -24,7 +24,14 @@ S3：
 アップロード指定：
 <hr />
 <form method="post" enctype="multipart/form-data" action="/cms/upload" >
-    <input type="file" name="files" multiple/>
+    <th:block th:each="dir : ${dirs}">
+        <input type="radio" name="dir" value="${dir}" th.text="${dir}" />
+    </th:block>
+    <br />
+    追加パス：<input type="text" name="addDir" />
+    <br />
+    ファイル：<input type="file" name="files" multiple/>
+    <br />
     <input type="submit" value="送信する"/>
 </form>
 
