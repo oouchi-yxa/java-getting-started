@@ -1,6 +1,7 @@
 package com.heroku.java.cms;
 
 import lombok.extern.java.Log;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,11 +59,14 @@ public class CmsUpload {
                     for (MultipartFile file : files) {
                         uploadFiles.add(file.getOriginalFilename());
 
-                        log.info("key: " + cmsSetting.getBasePrefix()
-                                + file.getOriginalFilename());
+                        String upKey = cmsSetting.getBasePrefix()
+                                + StringUtils.defaultString(form.getDir())
+                                + "/" + file.getOriginalFilename();
+
+                        // S3アップロード
+                        log.info("key: " + upKey);
                         PutObjectRequest put = PutObjectRequest.builder()
-                                .key(cmsSetting.getBasePrefix()
-                                        + file.getOriginalFilename())
+                                .key(upKey)
                                 .bucket(cmsSetting.getBucket())
                                 .build();
                         s3Client.putObject(put,
