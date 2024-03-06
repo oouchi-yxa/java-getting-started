@@ -2,6 +2,7 @@ package com.heroku.java.mail;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.extern.java.Log;
@@ -44,6 +45,7 @@ public class MailWebhook {
     public String mailWebhook(
             @RequestBody String data,
             @RequestHeader Map<String, String> map,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
         // 環境変数読み込み用クラス
@@ -76,6 +78,8 @@ public class MailWebhook {
         } catch (InvalidKeyException e) {
             log.info("invalid key miss: " + e.getMessage());
         }
+
+        log.info("remote ip or proxy ? " + request.getRemoteAddr());
 
         // 204をセットする
         response.setStatus(HttpStatus.NO_CONTENT.value());
