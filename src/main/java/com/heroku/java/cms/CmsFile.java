@@ -30,7 +30,7 @@ public class CmsFile {
     private static String FILE_STATUS_SV = "/fileStatus";
 
     @GetMapping("/cms/input")
-    public String mailInput() {
+    public String cmsInput() {
         return "cms/input";
     }
 

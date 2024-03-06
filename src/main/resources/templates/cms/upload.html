@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<span th:text="${message}"></span>
+
+<br />
+S3：
+<hr />
+<table style="border: solid">
+    <tr><th>ファイル名</th><th>サイズ</th><th>時間</th><th> </th></tr>
+        <th:block th:each="map1 : ${s3list}">
+            <tr>
+                <td>
+                    <a th:href="${map1.name}" th:text="${map1.name}"></a>
+                </td>
+                <td th:text="${map1.size}"></td>
+                <td th:text="${map1.time}"></td>
+                <td>
+                    <a th:href="|/cms/delete?deletePath=${map1.name}">削除する</a>
+                </td>
+            </tr>
+        </th:block>
+</table>
+
+アップロード指定：
+<hr />
+<form method="post" enctype="multipart/form-data" action="/cms/upload" >
+    <th:block th:each="dir : ${dirs}">
+        <input type="radio" name="dir" th:text="${dir}" th:value="${dir}" />
+    </th:block>
+    <br />
+    /<input type="text" name="addDir" />
+    <br />
+    ファイル：<input type="file" name="files" multiple/>
+    <br />
+    <input type="submit" value="送信する"/>
+</form>
+
+<br />
+アップロードしたファイル：
+<hr />
+<th:block th:each="file : ${files}">
+    <p th:text="${file}"></p>
+</th:block>
+
+</body>
+</html>
