@@ -88,7 +88,7 @@ public class MailSendSample {
         // 送信するリクエストの組み立て
         Request request = Request.builder()
                 .envelopes(Collections.singletonList(envelope))
-                .from(new Address(address))
+                .from(new Address("nhkcontract-info@mail.service.nhk-cs.jp"))
                 .subject(subject)
                 .body(new Body(body))
                 .custom_args(new CustomArgs(sdf.format(new Date())))
